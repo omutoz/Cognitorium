@@ -1,3 +1,4 @@
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './NewsRow.module.css';
 
 interface NewsRowProps {
@@ -14,13 +15,33 @@ interface NewsRowProps {
   };
 }
 
+const TAG_DICT: Record<string, { ua: string, en: string }> = {
+  'all': { ua: 'Всі', en: 'All' },
+  'top_labs': { ua: 'топ лаби', en: 'Top Labs' },
+  'model_release': { ua: 'реліз моделі', en: 'Model Release' },
+  'product': { ua: 'продукт', en: 'Product' },
+  'research': { ua: 'дослідження', en: 'Research' },
+  'partnership': { ua: 'партнерство', en: 'Partnership' },
+  'safety': { ua: 'безпека', en: 'Safety' },
+  'hardware': { ua: 'залізо', en: 'Hardware' },
+  'open_source': { ua: 'відкритий код', en: 'Open Source' },
+  'agents': { ua: 'агенти', en: 'Agents' },
+  'tools': { ua: 'інструменти', en: 'Tools' },
+  'funding': { ua: 'фінансування', en: 'Funding' }
+};
+
 export function NewsRow({ article }: NewsRowProps) {
-  const title = article.title_ua || article.title_en || 'Без заголовку';
-  const description = article.description_ua || article.description_en;
-  const date = new Date(article.published_at).toLocaleDateString('uk-UA', {
+  const { language } = useLanguage();
+  
+  const title = language === 'ua' ? (article.title_ua || article.title_en) : (article.title_en || article.title_ua);
+  const description = language === 'ua' ? (article.description_ua || article.description_en) : (article.description_en || article.description_ua);
+  
+  const date = new Date(article.published_at).toLocaleDateString(language === 'ua' ? 'uk-UA' : 'en-US', {
     day: 'numeric',
     month: 'long'
   });
+
+  const displayTag = article.tag && TAG_DICT[article.tag] ? TAG_DICT[article.tag][language] : article.tag;
 
   return (
     <a 
@@ -36,17 +57,17 @@ export function NewsRow({ article }: NewsRowProps) {
               className={styles.dot} 
               style={{ backgroundColor: article.sources?.color || '#ccc' }}
             />
-            <span className={styles.sourceName}>
+            <span 
+              className={styles.sourceName}
+              style={{ color: article.sources?.color || 'var(--text-primary)' }}
+            >
               {article.sources?.name || 'Невідоме джерело'}
             </span>
           </div>
           <span className={styles.metaDivider}>·</span>
           <time className={styles.date}>{date}</time>
-          {article.tag && (
-            <>
-              <span className={styles.metaDivider}>·</span>
-              <span className={styles.tag}>{article.tag}</span>
-            </>
+          {displayTag && (
+            <span className={styles.tag}>{displayTag}</span>
           )}
         </div>
         

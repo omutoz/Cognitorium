@@ -4,11 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Header.module.css';
 
 export function Header() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -30,9 +33,7 @@ export function Header() {
       <div className={styles.container}>
         <div className={styles.left}>
           <Link href="/" className={styles.logoLink}>
-            <div className={styles.logoBox}>
-              <div className={styles.logoCircle}></div>
-            </div>
+            <Image src="/logo.png" alt="Когніторіум" width={32} height={32} className={styles.logoImg} />
             <div className={styles.brandGroup}>
               <span className={styles.brandTitle}>Когніторіум</span>
               <span className={styles.brandSubtitle}>навчайся природно зі штучним інтелектом</span>
@@ -53,7 +54,12 @@ export function Header() {
         </nav>
 
         <div className={styles.right}>
-          <button className={styles.langBtn}>ENG</button>
+          <button 
+            className={styles.langBtn}
+            onClick={() => setLanguage(language === 'ua' ? 'en' : 'ua')}
+          >
+            {language === 'ua' ? 'ENG' : 'УКР'}
+          </button>
           
           <button 
             className={`${styles.themeToggle} ${mounted && theme === 'dark' ? styles.themeToggleDark : ''}`}

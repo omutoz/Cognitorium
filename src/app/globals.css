@@ -3,9 +3,9 @@
 
 /* ── LIGHT THEME (default) ── */
 :root {
-  --bg:                  #FAF8F2;
-  --bg-card:             #F3F0E8;
-  --bg-card-hover:       #EBE8DF;
+  --bg:                  #FFFFFF;
+  --bg-card:             #F9F8F6;
+  --bg-card-hover:       #F2EFEA;
 
   --text:                #1A1A1A;
   --text-secondary:      #555555;

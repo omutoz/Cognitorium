@@ -1,7 +1,9 @@
 .feedContainer {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 48px 48px;
+  background-color: var(--bg-card);
+  min-height: 100vh;
 }
 
 .pageHeader {
@@ -49,23 +51,14 @@
   color: var(--text-secondary);
 }
 
-.tagsScroll {
-  overflow-x: auto;
-  padding-bottom: 16px;
+.tagsContainer {
   margin-bottom: 32px;
-  /* hide scrollbar */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.tagsScroll::-webkit-scrollbar {
-  display: none;
 }
 
 .tagsList {
   display: flex;
-  gap: 12px;
-  white-space: nowrap;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tagBtn {
@@ -103,22 +96,27 @@
 .timeHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
 }
 
 .timeTitle {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
   margin: 0;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.timeLine {
+  flex-grow: 1;
+  height: 1px;
+  background-color: var(--border);
 }
 
 .timeCount {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
 }
 
@@ -132,4 +130,22 @@
   padding: 64px 0;
   color: var(--text-secondary);
   font-size: 15px;
+}
+
+.loadMoreBtn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 32px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.loadMoreBtn:hover {
+  background-color: var(--bg-hover);
 }

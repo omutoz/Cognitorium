@@ -72,12 +72,34 @@ export async function GET(req: Request) {
 
             if (!shouldInclude) continue;
 
-            // Determine tag (simplified logic)
+            // Better description extraction (fallback and strip HTML)
+            let rawDesc = item.contentSnippet || (item as any)['content:encoded'] || item.content || '';
+            rawDesc = rawDesc.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim().slice(0, 500);
+
+            // Determine tag based on comprehensive keyword matching
             let tag = null;
-            if (item.title?.toLowerCase().includes('gpt') || item.title?.toLowerCase().includes('claude') || item.title?.toLowerCase().includes('gemini')) {
-              tag = 'LLM Releases';
-            } else if (item.title?.toLowerCase().includes('funding') || item.title?.toLowerCase().includes('raises')) {
-              tag = 'Funding';
+            const searchString = `${item.title} ${rawDesc}`.toLowerCase();
+            
+            if (/\b(agent|agentic|autonomous)\b/.test(searchString)) {
+              tag = 'agents';
+            } else if (/\b(gpu|chip|hardware|accelerator|tpu|npu|supercomputer|blackwell|h100)\b/.test(searchString)) {
+              tag = 'hardware';
+            } else if (/\b(funding|raises|invests|seed|series a|series b)\b/.test(searchString)) {
+              tag = 'funding';
+            } else if (/\b(safety|alignment|evaluations|ethics|responsible|guardrails)\b/.test(searchString)) {
+              tag = 'safety';
+            } else if (/\b(open source|open-source|open weights)\b/.test(searchString)) {
+              tag = 'open_source';
+            } else if (/\b(research|paper|study|discovers|proposes|methodology)\b/.test(searchString)) {
+              tag = 'research';
+            } else if (/\b(partners|partnership|collaboration|teams up|joins)\b/.test(searchString)) {
+              tag = 'partnership';
+            } else if (/\b(release|launches|unveils|announcing|gpt-4|claude 3|gemini 1\.5|llama 3)\b/.test(searchString)) {
+              tag = 'model_release';
+            } else if (/\b(api|sdk|framework|library|developer tool)\b/.test(searchString)) {
+              tag = 'tools';
+            } else if (/\b(product|feature|app|platform|enterprise)\b/.test(searchString)) {
+              tag = 'product';
             }
 
             // Translate
@@ -86,12 +108,11 @@ export async function GET(req: Request) {
             try {
               if (item.title) {
                 const titleRes = await translator.translateText(item.title, null, 'uk');
-                title_ua = titleRes.text;
+                title_ua = (titleRes as deepl.TextResult).text;
               }
-              const desc = item.contentSnippet?.slice(0, 500);
-              if (desc) {
-                const descRes = await translator.translateText(desc, null, 'uk');
-                description_ua = descRes.text;
+              if (rawDesc) {
+                const descRes = await translator.translateText(rawDesc, null, 'uk');
+                description_ua = (descRes as deepl.TextResult).text;
               }
             } catch (translateError) {
               console.error('Translation error:', translateError);
@@ -102,7 +123,7 @@ export async function GET(req: Request) {
               url: item.link,
               title_en: item.title,
               title_ua: title_ua,
-              description_en: item.contentSnippet?.slice(0, 500),
+              description_en: rawDesc,
               description_ua: description_ua,
               published_at: item.isoDate || item.pubDate ? new Date(item.isoDate || item.pubDate!).toISOString() : new Date().toISOString(),
               tag: tag
