@@ -12,7 +12,7 @@ export default async function Home() {
       sources (name, color, is_top_lab)
     `)
     .order('published_at', { ascending: false })
-    .limit(100); // Fetch up to 100 for the feed
+    .limit(1500); // Fetch enough articles to populate tags across months
 
   if (error) {
     console.error('Error fetching articles:', error);
