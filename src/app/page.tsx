@@ -3,7 +3,7 @@ import { NewsCard } from '@/components/news/NewsCard';
 import { ParallelEvents } from '@/components/news/ParallelEvents';
 import styles from './page.module.css';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 60; // Revalidate every minute
 
 export default async function Home() {
   // Fetch latest articles
