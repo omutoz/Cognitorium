@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Когніторіум — Новини</title>
+  <meta name="description" content="Стрічка AI-новин з офіційних першоджерел. Тільки офіційні блоги компаній, без медіа-шуму." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAF8F2;
+      --bg-card: #F3F0E8;
+      --bg-card-hover: #EBE8DF;
+      --text: #1A1A1A;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --accent: #1A1A1A;
+      --accent-line: #1A1A1A;
+      --border: rgba(26,26,26,0.08);
+      --border-strong: rgba(26,26,26,0.15);
+      --nav-bg: #FAF8F2;
+      --nav-border: rgba(26,26,26,0.08);
+      --tag: #E4DFD4;
+      --tag-text: #444444;
+      --tag-active: #1A1A1A;
+      --tag-active-text: #FAF8F2;
+      --filter-bg: rgba(26,26,26,0.05);
+      --filter-border: rgba(26,26,26,0.10);
+      --filter-active-bg: #1A1A1A;
+      --filter-active-text: #FAF8F2;
+      --filter-inactive-text: #555555;
+      --switch-bg: #1A1A1A;
+      --switch-thumb: #FAF8F2;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1C1C1C;
+      --bg-card: #242424;
+      --bg-card-hover: #2C2C2C;
+      --text: #E8E8E8;
+      --text-secondary: #AAAAAA;
+      --text-muted: #666666;
+      --accent: #7DBF82;
+      --accent-line: #7DBF82;
+      --border: rgba(255,255,255,0.07);
+      --border-strong: rgba(255,255,255,0.13);
+      --nav-bg: #181818;
+      --nav-border: rgba(255,255,255,0.06);
+      --tag: #424242;
+      --tag-text: #9DBF82;
+      --tag-active: #7DBF82;
+      --tag-active-text: #1C1C1C;
+      --filter-bg: rgba(255,255,255,0.04);
+      --filter-border: rgba(255,255,255,0.08);
+      --filter-active-bg: #7DBF82;
+      --filter-active-text: #1C1C1C;
+      --filter-inactive-text: #AAAAAA;
+      --switch-bg: #7DBF82;
+      --switch-thumb: #1C1C1C;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--nav-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .nav-logo svg {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-text {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .nav-logo-name {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      white-space: nowrap;
+      transition: color 0.4s ease;
+    }
+
+    .nav-tagline {
+      font-size: 0.76rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: color 0.4s ease;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      flex-wrap: nowrap;
+    }
+
+    .nav-link {
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 1.5px solid transparent;
+      padding-bottom: 1px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .nav-link.active {
+      font-weight: 600;
+      color: var(--text);
+      border-bottom-color: var(--accent-line);
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--border-strong);
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      background: none;
+      border: 1px solid var(--border-strong);
+      border-radius: 2rem;
+      padding: 0.25rem 0.7rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* THEME SWITCH */
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: 1px solid var(--border-strong);
+      border-radius: 2rem;
+      padding: 0.3rem 0.45rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .switch-track {
+      width: 2rem;
+      height: 1.1rem;
+      border-radius: 1rem;
+      background: var(--switch-bg);
+      position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .switch-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: calc(1.1rem - 4px);
+      height: calc(1.1rem - 4px);
+      border-radius: 50%;
+      background: var(--switch-thumb);
+      transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    }
+
+    [data-theme="dark"] .switch-thumb {
+      left: calc(100% - 1rem - 2px);
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 5rem;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header-top {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      transition: color 0.4s ease;
+    }
+
+    .page-count {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.4s ease;
+    }
+
+    .accent-line {
+      width: 2.5rem;
+      height: 1.5px;
+      background: var(--accent-line);
+      margin-bottom: 0.7rem;
+      transition: background 0.4s ease;
+    }
+
+    .page-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot-accent {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      transition: background 0.4s ease;
+    }
+
+    .subtitle-text {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      transition: color 0.4s ease;
+    }
+
+    /* FILTERS */
+    .filters {
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 5px 13px;
+      border-radius: 2rem;
+      border: 1px solid var(--filter-border);
+      background: var(--filter-bg);
+      color: var(--filter-inactive-text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-btn.secondary {
+      font-size: 0.63rem;
+      opacity: 0.7;
+    }
+
+    .filter-btn.active {
+      background: var(--filter-active-bg);
+      border-color: var(--filter-active-bg);
+      color: var(--filter-active-text);
+      font-weight: 600;
+    }
+
+    /* WEEK GROUP */
+    .week-group {
+      margin-bottom: 2.5rem;
+    }
+
+    .week-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .week-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      white-space: nowrap;
+      transition: color 0.4s ease;
+    }
+
+    .week-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      transition: background 0.4s ease;
+    }
+
+    .week-count {
+      font-size: 0.56rem;
+      color: var(--text-muted);
+      transition: color 0.4s ease;
+    }
+
+    /* NEWS LIST */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5px;
+      background: var(--border);
+    }
+
+    /* NEWS CARD */
+    .news-card {
+      background: var(--bg-card);
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .news-card:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .news-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .card-dot-wrap {
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .card-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .card-source {
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    .card-date {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      transition: color 0.4s ease;
+    }
+
+    .card-tag {
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tag-text);
+      background: var(--tag);
+      padding: 0 8px;
+      border-radius: 3px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 0.45rem;
+      letter-spacing: -0.01em;
+      transition: color 0.4s ease;
+    }
+
+    .card-desc {
+      font-size: 0.77rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      transition: color 0.4s ease;
+    }
+
+    .card-arrow {
+      flex-shrink: 0;
+      color: var(--accent-line);
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translateX(-4px);
+      margin-top: 5px;
+    }
+
+    /* LOAD MORE */
+    .load-more-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .load-more-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: none;
+      border: 1px solid var(--border-strong);
+      border-radius: 2rem;
+      padding: 0.6rem 1.6rem;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: all 0.2s ease;
+    }
+
+    .load-more-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">
+      <!-- Logo SVG (hub-and-spokes) -->
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#CCCCCC" stroke-width="2.5">
+          <line x1="50" y1="50" x2="50" y2="8"/>
+          <line x1="50" y1="50" x2="50" y2="92"/>
+          <line x1="50" y1="50" x2="8" y2="50"/>
+          <line x1="50" y1="50" x2="92" y2="50"/>
+          <line x1="50" y1="50" x2="21" y2="21"/>
+          <line x1="50" y1="50" x2="79" y2="79"/>
+          <line x1="50" y1="50" x2="79" y2="21"/>
+          <line x1="50" y1="50" x2="21" y2="79"/>
+          <line x1="50" y1="50" x2="13" y2="33"/>
+          <line x1="50" y1="50" x2="87" y2="67"/>
+          <line x1="50" y1="50" x2="67" y2="13"/>
+          <line x1="50" y1="50" x2="33" y2="87"/>
+        </g>
+        <g fill="#888">
+          <circle cx="50" cy="8" r="5"/>
+          <circle cx="50" cy="92" r="5"/>
+          <circle cx="8" cy="50" r="5"/>
+          <circle cx="92" cy="50" r="5"/>
+          <circle cx="21" cy="21" r="5"/>
+          <circle cx="79" cy="79" r="5"/>
+          <circle cx="79" cy="21" r="5"/>
+          <circle cx="21" cy="79" r="5"/>
+          <circle cx="13" cy="33" r="5"/>
+          <circle cx="87" cy="67" r="5"/>
+          <circle cx="67" cy="13" r="5"/>
+          <circle cx="33" cy="87" r="5"/>
+        </g>
+        <circle cx="50" cy="50" r="14" fill="#1A1A1A" id="logo-ring"/>
+        <circle cx="50" cy="50" r="7" fill="#2D8653" id="logo-center"/>
+      </svg>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">Когніторіум</span>
+        <span class="nav-tagline" id="tagline">навчайся природно зі штучним інтелектом</span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-link" data-nav="about">Про нас</span>
+      <span class="nav-link active" data-nav="news">Новини</span>
+      <span class="nav-link" data-nav="students">Учням</span>
+      <span class="nav-link" data-nav="uni">Студентам</span>
+      <span class="nav-link" data-nav="teachers">Вчителям</span>
+      <span class="nav-link" data-nav="tools">Інструменти</span>
+      <span class="nav-link" data-nav="context">Контекст</span>
+      <div class="nav-divider"></div>
+      <button class="lang-btn" id="langBtn">ENG</button>
+      <button class="theme-switch" id="themeSwitch" title="Перемкнути тему">
+        <div class="switch-track">
+          <div class="switch-thumb"></div>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-header-top">
+        <h1 class="page-title" id="pageTitle">Новини</h1>
+        <span class="page-count" id="pageCount">6 новин за тиждень</span>
+      </div>
+      <div class="accent-line"></div>
+      <div class="page-subtitle">
+        <div class="dot-accent"></div>
+        <span class="subtitle-text" id="subtitleText">Стрічка AI-новин з офіційних джерел · Оновлено 1 годину тому</span>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters" id="filters"></div>
+
+    <!-- NEWS -->
+    <div id="newsContainer"></div>
+
+    <!-- LOAD MORE -->
+    <div class="load-more-wrap">
+      <button class="load-more-btn" id="loadMoreBtn">Завантажити ще тиждень</button>
+    </div>
+
+  </div>
+
+  <script>
+    /* ── DATA ── */
+
+    const SOURCE_COLORS = {
+      "Anthropic": "#C4552A", "OpenAI": "#10A37F", "Google AI": "#4285F4",
+      "Google DeepMind": "#1D9E75", "Meta AI": "#0668E1", "Microsoft AI": "#00A4EF",
+      "NVIDIA": "#76B900", "Hugging Face": "#FF9D00", "Mistral AI": "#7C3AED",
+      "xAI": "#888888", "ElevenLabs": "#E84393", "Perplexity": "#1FB8CD",
+      "Cohere": "#39A28A", "DeepSeek": "#4B6EF5", "AWS ML": "#FF9900",
+      "Arena": "#E85D04", "Luma AI": "#9B59B6",
+    };
+
+    const TAGS = ["all", "top labs", "model release", "product", "research", "partnership", "safety", "hardware", "open source", "agents", "tools", "funding"];
+    const SECONDARY_TAGS = ["funding"];
+
+    const TAG_LABELS = {
+      ua: { all: "Всі", "top labs": "топ лаби", "model release": "реліз моделі", product: "продукт", research: "дослідження", partnership: "партнерство", safety: "безпека", hardware: "залізо", "open source": "відкритий код", agents: "агенти", tools: "інструменти", funding: "фінансування" },
+      en: { all: "All", "top labs": "top labs", "model release": "model release", product: "product", research: "research", partnership: "partnership", safety: "safety", hardware: "hardware", "open source": "open source", agents: "agents", tools: "tools", funding: "funding" },
+    };
+
+    const TOP_LAB_SOURCES = ["OpenAI", "Anthropic", "Google AI", "Google DeepMind", "Meta AI", "Microsoft AI", "NVIDIA"];
+
+    const NAV_ITEMS = {
+      ua: { about: "Про нас", news: "Новини", students: "Учням", uni: "Студентам", teachers: "Вчителям", tools: "Інструменти", context: "Контекст" },
+      en: { about: "About", news: "News", students: "Students", uni: "Uni", teachers: "Teachers", tools: "Tools", context: "Context" },
+    };
+
+    const i18n = {
+      ua: {
+        title: "Новини",
+        subtitle: "Стрічка AI-новин з офіційних джерел",
+        updated: "Оновлено 1 годину тому",
+        thisWeek: "Цей тиждень",
+        langSwitch: "ENG",
+        loadMore: "Завантажити ще тиждень",
+        tagline: "навчайся природно зі штучним інтелектом",
+        itemsWeek: "новин за тиждень",
+      },
+      en: {
+        title: "News",
+        subtitle: "AI news feed from official sources",
+        updated: "Updated 1 hour ago",
+        thisWeek: "This week",
+        langSwitch: "УКР",
+        loadMore: "Load previous week",
+        tagline: "learn naturally with artificial intelligence",
+        itemsWeek: "news this week",
+      },
+    };
+
+    const NEWS = [
+      {
+        week: "26 травня 2026", week_en: "May 26, 2026", isCurrentWeek: true,
+        items: [
+          { id: 1, source: "Anthropic", date: "25 травня", date_en: "May 25", tag: "safety", topLab: true, ua: "Кріс Ола у Ватикані: AI має внутрішні стани схожі на радість, страх і горе", en: "Chris Olah at Vatican: AI has internal states resembling joy, fear and grief", desc_ua: "Співзасновник Anthropic закликав громадянське суспільство долучитися до нагляду за розвитком AI. Він відверто визнав що всі frontier-лаби діють під тиском комерційних і геополітичних амбіцій.", desc_en: "Anthropic co-founder urged civil society to join AI oversight efforts, frankly admitting that all frontier labs operate under commercial and geopolitical pressure." },
+          { id: 2, source: "OpenAI", date: "24 травня", date_en: "May 24", tag: "model release", topLab: true, ua: "GPT-5.5 тепер доступний у всіх планах включаючи безкоштовний", en: "GPT-5.5 now available across all plans including free tier", desc_ua: "OpenAI розширила доступ до флагманського асистента. Безкоштовні користувачі отримали ліміт 10 запитів на день, Plus і Pro — без обмежень.", desc_en: "OpenAI expanded access to its flagship assistant. Free users get 10 requests per day, Plus and Pro plans are unlimited." },
+          { id: 3, source: "Google DeepMind", date: "23 травня", date_en: "May 23", tag: "research", topLab: true, ua: "Gemini for Science: нові інструменти для прискорення наукових відкриттів", en: "Gemini for Science: new tools to accelerate scientific discovery", desc_ua: "Google DeepMind презентував набір інструментів для дослідників у галузях біології, хімії та кліматології. Особливий акцент — на синтезі літератури і генерації гіпотез.", desc_en: "Google DeepMind presented a toolkit for researchers in biology, chemistry and climate science, with emphasis on literature synthesis and hypothesis generation." },
+          { id: 4, source: "Anthropic", date: "22 травня", date_en: "May 22", tag: "partnership", topLab: true, ua: "KPMG інтегрує Claude у роботу 276 000 співробітників у стратегічному альянсі", en: "KPMG integrates Claude across 276,000 employees in strategic alliance", desc_ua: "Одна з найбільших аудиторських компаній світу стала партнером Anthropic для трансформації робочих процесів в аудиті, консалтингу та податковому обліку.", desc_en: "One of the world's largest audit firms partnered with Anthropic to transform workflows in audit, consulting and tax services." },
+          { id: 5, source: "NVIDIA", date: "22 травня", date_en: "May 22", tag: "hardware", topLab: true, ua: "Blackwell Ultra: нові GPU для inference з підтримкою FP4 і вдвічі вищою пропускною спроможністю", en: "Blackwell Ultra: new inference GPUs with FP4 support and 2x throughput", desc_ua: "NVIDIA анонсувала наступне покоління чіпів для виведення AI-моделей. Підтримка FP4 дозволяє вдвічі збільшити кількість токенів на секунду при тій самій потужності.", desc_en: "NVIDIA announced the next generation of AI inference chips. FP4 support doubles token throughput at the same power consumption." },
+          { id: 6, source: "Hugging Face", date: "20 травня", date_en: "May 20", tag: "product", topLab: false, ua: "HF Inference Providers: один API для 50+ моделей від 12 провайдерів", en: "HF Inference Providers: one API for 50+ models from 12 providers", desc_ua: "Hugging Face об'єднав доступ до моделей від Anthropic, Mistral, Cohere та інших через єдиний уніфікований інтерфейс з однаковим форматом запитів.", desc_en: "Hugging Face unified access to models from Anthropic, Mistral, Cohere and others through a single interface with a consistent request format." },
+        ]
+      },
+      {
+        week: "19 травня 2026", week_en: "May 19, 2026", isCurrentWeek: false,
+        items: [
+          { id: 7, source: "Mistral AI", date: "19 травня", date_en: "May 19", tag: "model release", topLab: false, ua: "Devstral 2: open-source модель для агентного кодування (Apache 2.0)", en: "Devstral 2: open-source model for agentic coding (Apache 2.0)", desc_ua: "Mistral AI опублікувала нову кодингову модель з ліцензією Apache 2.0, оптимізовану для автономних агентів що виконують багатокрокові задачі.", desc_en: "Mistral AI released a new coding model under Apache 2.0 license, optimized for autonomous agents handling multi-step tasks." },
+          { id: 8, source: "Anthropic", date: "18 травня", date_en: "May 18", tag: "product", topLab: true, ua: "Anthropic придбав Stainless — автоматична генерація SDK для API", en: "Anthropic acquires Stainless — automatic SDK generation for APIs", desc_ua: "Поглинання дозволить Anthropic автоматично генерувати клієнтські бібліотеки для нових версій API на десятках мов програмування.", desc_en: "The acquisition will allow Anthropic to auto-generate client libraries for new API versions across dozens of programming languages." },
+          { id: 9, source: "DeepSeek", date: "17 травня", date_en: "May 17", tag: "model release", topLab: false, ua: "DeepSeek V4-Pro: 1.6T параметрів, контекст 1 млн токенів доступний через API", en: "DeepSeek V4-Pro: 1.6T parameters, 1M token context now available via API", desc_ua: "Китайська лабораторія офіційно відкрила API для найпотужнішої моделі. Підтримка контексту в 1 мільйон токенів дозволяє аналізувати цілі кодові бази або книги.", desc_en: "Chinese lab officially opened API for its most powerful model. 1M token context support enables analysis of entire codebases or books." },
+          { id: 10, source: "Cohere", date: "16 травня", date_en: "May 16", tag: "product", topLab: false, ua: "Command A Vision: мультимодальна enterprise-модель з підтримкою документів і зображень", en: "Command A Vision: multimodal enterprise model with document and image support", desc_ua: "Cohere додав підтримку зображень і PDF до флагманської enterprise-моделі Command A, зберігши акцент на приватності і розгортанні в корпоративній інфраструктурі.", desc_en: "Cohere added image and PDF support to flagship enterprise model Command A, maintaining focus on privacy and on-premise deployment." },
+          { id: 11, source: "Anthropic", date: "14 травня", date_en: "May 14", tag: "partnership", topLab: true, ua: "Anthropic та Gates Foundation: партнерство на $200 млн для глобальної охорони здоров'я", en: "Anthropic and Gates Foundation: $200M partnership for global health", desc_ua: "Фінансування спрямоване на використання Claude у програмах охорони здоров'я, освіти та наукових досліджень на 4 роки. Включає грантове фінансування і кредити Claude.", desc_en: "Funding aimed at using Claude in health, education and research programs over 4 years, including grants and Claude credits." },
+        ]
+      },
+      {
+        week: "12 травня 2026", week_en: "May 12, 2026", isCurrentWeek: false,
+        items: [
+          { id: 12, source: "Luma AI", date: "15 травня", date_en: "May 15", tag: "product", topLab: false, ua: "Ray3.14: генерація відео у нативному 1080p — у 4 рази швидше попередньої версії", en: "Ray3.14: native 1080p video generation — 4x faster than previous version", desc_ua: "Luma AI випустила новий відеогенератор з покращеною стабільністю руху і підтримкою нативного 1080p без upscaling. Генерація 10 секунд відео займає менше хвилини.", desc_en: "Luma AI released new video generator with improved motion stability and native 1080p without upscaling. 10 seconds of video takes under a minute to generate." },
+          { id: 13, source: "ElevenLabs", date: "12 травня", date_en: "May 12", tag: "product", topLab: false, ua: "Eleven v3: синтез мовлення з емоційним контролем і підтримкою 32 мов", en: "Eleven v3: speech synthesis with emotion control and 32 language support", desc_ua: "ElevenLabs представив оновлену модель з точним налаштуванням тону, темпу та емоційного забарвлення. Нова архітектура зменшила артефакти при синтезі довгих текстів.", desc_en: "ElevenLabs presented updated model with precise control over tone, pace and emotion. New architecture reduces artifacts in long-form synthesis." },
+          { id: 14, source: "AWS ML", date: "9 травня", date_en: "May 9", tag: "model release", topLab: false, ua: "Claude Opus 4.7 доступний в Amazon Bedrock з підтримкою агентів і tool use", en: "Claude Opus 4.7 available in Amazon Bedrock with agent and tool use support", desc_ua: "AWS інтегрував останню модель Anthropic у Bedrock з підтримкою Managed Agents, Knowledge Bases і tool use. Доступний у регіонах US East і EU West.", desc_en: "AWS integrated Anthropic's latest model into Bedrock with Managed Agents, Knowledge Bases and tool use support. Available in US East and EU West regions." },
+        ]
+      }
+    ];
+
+    /* ── STATE ── */
+    let lang = 'ua';
+    let theme = 'light';
+    let activeFilter = 'all';
+
+    /* ── RENDER ── */
+    function itemMatchesFilter(item) {
+      if (activeFilter === 'all') return true;
+      if (activeFilter === 'top labs') return TOP_LAB_SOURCES.includes(item.source);
+      return item.tag === activeFilter;
+    }
+
+    function countCurrentWeek() {
+      return NEWS[0].items.filter(itemMatchesFilter).length;
+    }
+
+    function updatePageTexts() {
+      const L = i18n[lang];
+      const TL = TAG_LABELS[lang];
+      const NAV = NAV_ITEMS[lang];
+
+      document.getElementById('tagline').textContent = L.tagline;
+      document.getElementById('pageTitle').textContent = L.title;
+      document.getElementById('pageCount').textContent = countCurrentWeek() + ' ' + L.itemsWeek;
+      document.getElementById('subtitleText').textContent = L.subtitle + ' · ' + L.updated;
+      document.getElementById('langBtn').textContent = L.langSwitch;
+      document.getElementById('loadMoreBtn').textContent = L.loadMore;
+
+      // Nav
+      document.querySelectorAll('.nav-link').forEach(el => {
+        const key = el.dataset.nav;
+        if (NAV[key]) el.textContent = NAV[key];
+      });
+
+      // Filters
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        const tag = btn.dataset.tag;
+        btn.textContent = TL[tag];
+      });
+
+      // News cards
+      document.querySelectorAll('.news-card').forEach(card => {
+        const id = parseInt(card.dataset.id);
+        const item = findNewsItem(id);
+        if (!item) return;
+        card.querySelector('.card-date').textContent = lang === 'ua' ? item.date : item.date_en;
+        card.querySelector('.card-tag').textContent = TL[item.tag];
+        card.querySelector('.card-title').textContent = lang === 'ua' ? item.ua : item.en;
+        card.querySelector('.card-desc').textContent = lang === 'ua' ? item.desc_ua : item.desc_en;
+      });
+
+      // Week labels
+      document.querySelectorAll('.week-label').forEach(el => {
+        const isCurrentWeek = el.dataset.currentweek === 'true';
+        const weekUa = el.dataset.weekua;
+        const weekEn = el.dataset.weeken;
+        el.textContent = isCurrentWeek ? L.thisWeek : (lang === 'ua' ? weekUa : weekEn);
+      });
+    }
+
+    function findNewsItem(id) {
+      for (const week of NEWS) {
+        const found = week.items.find(i => i.id === id);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    function renderFilters() {
+      const filtersEl = document.getElementById('filters');
+      const TL = TAG_LABELS[lang];
+      filtersEl.innerHTML = '';
+      TAGS.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn' + (SECONDARY_TAGS.includes(tag) ? ' secondary' : '') + (activeFilter === tag ? ' active' : '');
+        btn.dataset.tag = tag;
+        btn.textContent = TL[tag];
+        btn.addEventListener('click', () => {
+          activeFilter = tag;
+          renderFilters();
+          renderNews();
+          updatePageTexts();
+        });
+        filtersEl.appendChild(btn);
+      });
+    }
+
+    function renderNews() {
+      const container = document.getElementById('newsContainer');
+      const TL = TAG_LABELS[lang];
+      const L = i18n[lang];
+      container.innerHTML = '';
+
+      NEWS.forEach(week => {
+        const visible = week.items.filter(itemMatchesFilter);
+        if (visible.length === 0) return;
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'week-group';
+
+        // Week header
+        const headerEl = document.createElement('div');
+        headerEl.className = 'week-header';
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'week-label';
+        labelEl.dataset.currentweek = week.isCurrentWeek ? 'true' : 'false';
+        labelEl.dataset.weekua = week.week;
+        labelEl.dataset.weeken = week.week_en;
+        labelEl.textContent = week.isCurrentWeek ? L.thisWeek : (lang === 'ua' ? week.week : week.week_en);
+
+        const lineEl = document.createElement('div');
+        lineEl.className = 'week-line';
+
+        const countEl = document.createElement('span');
+        countEl.className = 'week-count';
+        countEl.textContent = visible.length;
+
+        headerEl.appendChild(labelEl);
+        headerEl.appendChild(lineEl);
+        headerEl.appendChild(countEl);
+        groupEl.appendChild(headerEl);
+
+        // News list
+        const listEl = document.createElement('div');
+        listEl.className = 'news-list';
+
+        visible.forEach(item => {
+          const srcColor = SOURCE_COLORS[item.source] || '#888888';
+          const card = document.createElement('div');
+          card.className = 'news-card';
+          card.dataset.id = item.id;
+          card.innerHTML = `
+            <div class="card-dot-wrap">
+              <div class="card-dot" style="background:${srcColor}"></div>
+            </div>
+            <div class="card-body">
+              <div class="card-meta">
+                <span class="card-source" style="color:${srcColor}">${item.source}</span>
+                <span class="card-date">${lang === 'ua' ? item.date : item.date_en}</span>
+                <span class="card-tag">${TL[item.tag]}</span>
+              </div>
+              <div class="card-title">${lang === 'ua' ? item.ua : item.en}</div>
+              <p class="card-desc">${lang === 'ua' ? item.desc_ua : item.desc_en}</p>
+            </div>
+            <div class="card-arrow">→</div>
+          `;
+          listEl.appendChild(card);
+        });
+
+        groupEl.appendChild(listEl);
+        container.appendChild(groupEl);
+      });
+    }
+
+    /* ── INIT ── */
+    renderFilters();
+    renderNews();
+
+    /* ── LANGUAGE TOGGLE ── */
+    document.getElementById('langBtn').addEventListener('click', () => {
+      lang = lang === 'ua' ? 'en' : 'ua';
+      renderFilters();
+      renderNews();
+      updatePageTexts();
+    });
+
+    /* ── THEME TOGGLE ── */
+    document.getElementById('themeSwitch').addEventListener('click', () => {
+      theme = theme === 'light' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : '';
+      // Update logo ring color
+      const ring = document.getElementById('logo-ring');
+      if (ring) ring.setAttribute('fill', theme === 'dark' ? '#E8E8E8' : '#1A1A1A');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── LIGHT THEME (default) ── */
+:root {
+  --bg:                  #FAF8F2;
+  --bg-card:             #F3F0E8;
+  --bg-card-hover:       #EBE8DF;
+
+  --text:                #1A1A1A;
+  --text-secondary:      #555555;
+  --text-muted:          #888888;
+
+  --accent:              #1A1A1A;
+  --accent-line:         #1A1A1A;
+
+  --border:              rgba(26, 26, 26, 0.08);
+  --border-strong:       rgba(26, 26, 26, 0.15);
+
+  --nav-bg:              #FAF8F2;
+  --nav-border:          rgba(26, 26, 26, 0.08);
+
+  --tag-bg:              #E4DFD4;
+  --tag-text:            #444444;
+  --tag-active-bg:       #1A1A1A;
+  --tag-active-text:     #FAF8F2;
+
+  --filter-bg:           rgba(26, 26, 26, 0.05);
+  --filter-border:       rgba(26, 26, 26, 0.10);
+  --filter-active-bg:    #1A1A1A;
+  --filter-active-text:  #FAF8F2;
+  --filter-inactive:     #555555;
+
+  --switch-bg:           #1A1A1A;
+  --switch-thumb:        #FAF8F2;
+}
+
+/* ── DARK THEME ── */
+[data-theme="dark"] {
+  --bg:                  #1C1C1C;
+  --bg-card:             #242424;
+  --bg-card-hover:       #2C2C2C;
+
+  --text:                #E8E8E8;
+  --text-secondary:      #AAAAAA;
+  --text-muted:          #666666;
+
+  --accent:              #7DBF82;
+  --accent-line:         #7DBF82;
+
+  --border:              rgba(255, 255, 255, 0.07);
+  --border-strong:       rgba(255, 255, 255, 0.13);
+
+  --nav-bg:              #181818;
+  --nav-border:          rgba(255, 255, 255, 0.06);
+
+  --tag-bg:              #424242;
+  --tag-text:            #9DBF82;
+  --tag-active-bg:       #7DBF82;
+  --tag-active-text:     #1C1C1C;
+
+  --filter-bg:           rgba(255, 255, 255, 0.04);
+  --filter-border:       rgba(255, 255, 255, 0.08);
+  --filter-active-bg:    #7DBF82;
+  --filter-active-text:  #1C1C1C;
+  --filter-inactive:     #AAAAAA;
+
+  --switch-bg:           #7DBF82;
+  --switch-thumb:        #1C1C1C;
+}
+
+/* ── BASE ── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-dm-sans), sans-serif;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
