@@ -1,0 +1,94 @@
+.rowLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.row {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.rowLink:hover .row {
+  background-color: var(--bg-hover);
+  /* Slight negative margin and padding to make hover effect bleed out cleanly */
+  margin: 0 -16px;
+  padding: 24px 16px;
+  border-radius: 8px;
+  border-bottom-color: transparent;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.sourceGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.sourceName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.metaDivider {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: var(--filter-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
 import Parser from 'rss-parser';
+import * as deepl from 'deepl-node';
+
+const translator = new deepl.Translator(process.env.DEEPL_API_KEY || '');
 
 // Note: In a real scenario for Vercel Hobby, this might timeout if too many sources. 
 // We process them sequentially or in small batches.
@@ -35,8 +38,23 @@ export async function GET(req: Request) {
         if (source.method === 'rss' && source.feed_url) {
           const feed = await parser.parseURL(source.feed_url);
           
+          // Pre-fetch existing URLs to avoid translating already stored articles
+          const itemUrls = feed.items.map(i => i.link).filter(Boolean) as string[];
+          let existingUrls = new Set<string>();
+          
+          if (itemUrls.length > 0) {
+            // Chunking might be needed if >1000 items, but RSS usually has < 100
+            const { data: existing } = await supabase
+              .from('articles')
+              .select('url')
+              .in('url', itemUrls);
+            if (existing) {
+              existingUrls = new Set((existing as any[]).map(e => e.url));
+            }
+          }
+
           for (const item of feed.items) {
-            if (!item.link) continue;
+            if (!item.link || existingUrls.has(item.link)) continue;
 
             // NVIDIA filtering
             let shouldInclude = true;
@@ -62,11 +80,30 @@ export async function GET(req: Request) {
               tag = 'Funding';
             }
 
+            // Translate
+            let title_ua = null;
+            let description_ua = null;
+            try {
+              if (item.title) {
+                const titleRes = await translator.translateText(item.title, null, 'uk');
+                title_ua = titleRes.text;
+              }
+              const desc = item.contentSnippet?.slice(0, 500);
+              if (desc) {
+                const descRes = await translator.translateText(desc, null, 'uk');
+                description_ua = descRes.text;
+              }
+            } catch (translateError) {
+              console.error('Translation error:', translateError);
+            }
+
             newArticles.push({
               source_id: source.id,
               url: item.link,
               title_en: item.title,
+              title_ua: title_ua,
               description_en: item.contentSnippet?.slice(0, 500),
+              description_ua: description_ua,
               published_at: item.isoDate || item.pubDate ? new Date(item.isoDate || item.pubDate!).toISOString() : new Date().toISOString(),
               tag: tag
             });
