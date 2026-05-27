@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
 import Parser from 'rss-parser';
 
-export const maxDuration = 300; // Allow 5 minutes for Vercel Hobby max execution (requires Hobby limits adjustment or edge)
-
 // Note: In a real scenario for Vercel Hobby, this might timeout if too many sources. 
 // We process them sequentially or in small batches.
 
